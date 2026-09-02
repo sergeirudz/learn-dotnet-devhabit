@@ -1,0 +1,20 @@
+services:
+  devhabit.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      # HTTPS certificate configuration
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=DevHabitPassword123 # PW set in CLI.md
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/home/app/.aspnet/https/aspnetapp.pfx
+    ports:
+      - "8080"
+      - "8081"
+    volumes:
+      # Windows specific paths
+      # - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      # - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      # Linux / MacOS specific paths
+      # Mount the HTTPS certificate from host to container
+      - ${HOME}/.aspnet/https:/home/app/.aspnet/https:ro
+      - ${HOME}/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro

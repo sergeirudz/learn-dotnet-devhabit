@@ -362,6 +362,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# Ignore Docker containers
 .containers
 /src/DevHabit.Api/Database/Migrations
 /src/DevHabit.Api/Migrations/Application
@@ -371,3 +372,6 @@ FodyWeavers.xsd
 **/*/bin
 bin
 obj
+
+NOTES.md
+README.md

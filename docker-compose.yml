@@ -1,0 +1,46 @@
+services:
+  devhabit.api:
+    image: ${DOCKER_REGISTRY-}devhabitapi
+    build:
+      context: .
+      dockerfile: src/DevHabit.Api/Dockerfile
+    ports:
+      - 6000:8080
+      - 6001:8081
+    environment:
+      # Aspire Dashboard
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://devhabit.aspire-dashboard:18889
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      # Seq
+      # - OTEL_EXPORTER_OTLP_ENDPOINT=http://devhabit.seq:5341/ingest/otlp # Send telemetry data here
+      # - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+
+  devhabit.postgres:
+    image: postgres:latest # or latest
+    environment:
+      POSTGRES_DB: devhabit
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./.containers/postgres_data:/var/lib/postgresql
+    ports:
+      - 5432:5432
+
+  # Open Telemetry services
+  devhabit.aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
+    environment:
+      DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: true # Access
+    ports:
+      - 18888:18888 # http://localhost:18888
+
+
+  # devhabit.seq:
+  #   image: datalust/seq:2026.1
+  #   environment:
+  #     ACCEPT_EULA: "Y"
+  #   volumes:
+  #     - ./.containers/seq_data:/data
+  #   ports:
+  #     - 8080:80
+  #     - 5341:5341
