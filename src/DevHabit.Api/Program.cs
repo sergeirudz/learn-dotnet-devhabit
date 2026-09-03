@@ -11,19 +11,25 @@ using OpenTelemetry.Trace;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+    {
+        options.ReturnHttpNotAcceptable = true;
+    })
+    // Replace System.Text.Json with Newtonsoft.Json
+    .AddNewtonsoftJson()
+    .AddXmlSerializerFormatters();
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(
             // src/DevHabit.Api/appsettings.Development.json
-            builder.Configuration.GetConnectionString("Database"), 
+            builder.Configuration.GetConnectionString("Database"),
             npsqlOptions =>
                 npsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName,
-            // assign name and schema for migration history table
-                    Schemas.Application) 
-
+                    // assign name and schema for migration history table
+                    Schemas.Application)
         )
         .UseSnakeCaseNamingConvention();
 });
