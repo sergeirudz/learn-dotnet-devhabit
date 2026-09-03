@@ -58,4 +58,23 @@ public sealed class HabitsController(
 
         return CreatedAtAction(nameof(GetHabit), new { id = habitDto.Id }, habitDto);
     }
+
+    //! PUT: habits/{id}
+    [HttpPut("{id}")]
+    public async Task<ActionResult> UpdateHabit(string id,
+        [FromBody] UpdateHabitDto updateHabitDto // Model binding source. APS.NET will infer it from the body
+    )
+    {
+        Habit? habit = await dbContext.Habits.FirstOrDefaultAsync(h => h.Id == id);
+
+        if (habit is null)
+        {
+            return NotFound();
+        }
+
+        habit.UpdateFromDto(updateHabitDto);
+        await dbContext.SaveChangesAsync();
+
+        return NoContent(); // 204 No Content
+    }
 }
