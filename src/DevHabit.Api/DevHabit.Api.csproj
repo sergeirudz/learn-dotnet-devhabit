@@ -24,10 +24,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <Compile Include="..\..\DTOs\Habits\HabitDto.cs">
+        <Link>DTOs\Habit\HabitDto.cs</Link>
+      </Compile>
       <Compile Include="..\..\Entities\Frequency.cs">
         <Link>Entities\Frequency.cs</Link>
       </Compile>

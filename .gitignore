@@ -373,6 +373,6 @@ FodyWeavers.xsd
 bin
 obj
 .github/copilot-instructions.md
-
+.ai
 NOTES.md
 README.md

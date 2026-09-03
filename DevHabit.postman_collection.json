@@ -1,0 +1,440 @@
+{
+  "info": {
+    "_postman_id": "76319f1e-33e5-4528-8506-00736829d0e6",
+    "name": "DevHabit",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "15319545"
+  },
+  "item": [
+    {
+      "name": "Tags",
+      "item": [
+        {
+          "name": "Get all tags",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6000/tags",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "tags"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create tag",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"walking\",\n    \"description\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:6000/tags",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "tags"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get tag by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6000/tags/:id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "tags",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove tag",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6000/tags/:id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "tags",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "t_019ab201-5ddf-7b2b-bcdd-926ecebe274d"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update tag",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6000/tags/:id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "tags",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "t_019ab201-5ddf-7b2b-bcdd-926ecebe274d"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Habits",
+      "item": [
+        {
+          "name": "Get habits",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/xml",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.dev-habit.hateoas+json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6000/habits",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "habits"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "coding",
+                  "disabled": true
+                },
+                {
+                  "key": "type",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "name asc,description,frequency.type",
+                  "disabled": true
+                },
+                {
+                  "key": "pageSize",
+                  "value": "3",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get habit by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json;v=2",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.dev-habit.hateoas.1+json",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6000/habits/:id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "habits",
+                ":id"
+              ],
+              "query": [
+                {
+                  "key": "fields",
+                  "value": "name,description,target,frequency",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "h_019ab201-4e99-7418-94c0-0e78e4a1f821"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create habit",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Daily Talking\",\n    \"description\": null,\n    \"type\": 2,\n    \"frequency\": {\n        \"type\": 1,\n        \"timesPerPeriod\": 1\n    },\n    \"target\": {\n        \"value\": 30,\n        \"unit\": \"minutes\"\n    },\n    \"status\": 1,\n    \"isArchived\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:6000/habits",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "habits"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update habit",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Daily coding\",\n    \"description\": null,\n    \"type\": 2,\n    \"frequency\": {\n        \"type\": 1,\n        \"timesPerPeriod\": 1\n    },\n    \"target\": {\n        \"value\": 30,\n        \"unit\": \"minutes\"\n    },\n    \"milestone\": {\n        \"target\": 100\n    },\n    \"isArchived\": false,\n    \"status\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:6000/habits/h_019ab04b-0a67-7875-b4bf-69c7eaf4f356",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "habits",
+                "h_019ab04b-0a67-7875-b4bf-69c7eaf4f356"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "JSON Patch habit",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n    {\n    \"op\": \"replace\",\n    \"path\": \"/name\",\n    \"value\": \"Daily coding patched\"\n    },\n    {\n    \"op\": \"replace\",\n    \"path\": \"/description\",\n    \"value\": \"description patched\"\n    }   \n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:6000/habits/h_019ab04b-0a67-7875-b4bf-69c7eaf4f356",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "habits",
+                "h_019ab04b-0a67-7875-b4bf-69c7eaf4f356"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "remove habit",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6000/habits/:id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "habits",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "h_019ab04b-0a67-7875-b4bf-69c7eaf4f356"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "HabitTags",
+      "item": [
+        {
+          "name": "Upsert habit tags",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"tagIds\": [\n        \"t_019ab201-5ddf-7b2b-bcdd-926ecebe274d\"\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:6000/habits/:habitId/tags",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "habits",
+                ":habitId",
+                "tags"
+              ],
+              "variable": [
+                {
+                  "key": "habitId",
+                  "value": "h_019ab201-4e99-7418-94c0-0e78e4a1f821"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove habit tag",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6000/habits/:habitId/tags/:tagId",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "6000",
+              "path": [
+                "habits",
+                ":habitId",
+                "tags",
+                ":tagId"
+              ],
+              "variable": [
+                {
+                  "key": "habitId",
+                  "value": "h_019ab201-4e99-7418-94c0-0e78e4a1f821"
+                },
+                {
+                  "key": "tagId",
+                  "value": "t_019ab201-5ddf-7b2b-bcdd-926ecebe274d"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
