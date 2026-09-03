@@ -5,58 +5,70 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="EFCore.NamingConventions" />
+        <PackageReference Include="EFCore.NamingConventions"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
-        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
-        <PackageReference Include="Npgsql.OpenTelemetry" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
+        <PackageReference Include="Npgsql.OpenTelemetry"/>
         <!--    OpenTelemetry    -->
-        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
-        <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
-        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
-        <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
-        <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
-  
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol"/>
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Runtime"/>
+
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Include="..\..\DTOs\Habits\HabitDto.cs">
-        <Link>DTOs\Habit\HabitDto.cs</Link>
-      </Compile>
-      <Compile Include="..\..\Entities\Frequency.cs">
-        <Link>Entities\Frequency.cs</Link>
-      </Compile>
-      <Compile Include="..\..\Entities\FrequencyType.cs">
-        <Link>Entities\FrequencyType.cs</Link>
-      </Compile>
-      <Compile Include="..\..\Entities\Habit.cs">
-        <Link>Entities\Habit.cs</Link>
-      </Compile>
-      <Compile Include="..\..\Entities\HabitStatus.cs">
-        <Link>Entities\HabitStatus.cs</Link>
-      </Compile>
-      <Compile Include="..\..\Entities\HabitTag.cs">
-        <Link>Entities\HabitTag.cs</Link>
-      </Compile>
-      <Compile Include="..\..\Entities\HabitType.cs">
-        <Link>Entities\HabitType.cs</Link>
-      </Compile>
-      <Compile Include="..\..\Entities\Milestone.cs">
-        <Link>Entities\Milestone.cs</Link>
-      </Compile>
-      <Compile Include="..\..\Entities\Tag.cs">
-        <Link>Entities\Tag.cs</Link>
-      </Compile>
-      <Compile Include="..\..\Entities\Target.cs">
-        <Link>Entities\Target.cs</Link>
-      </Compile>
-      <Compile Include="..\..\Extensions\DatabaseExtensions.cs">
-        <Link>Extensions\DatabaseExtensions.cs</Link>
-      </Compile>
+        <Compile Include="..\..\DTOs\Habits\CreateHabitDto.cs">
+            <Link>DTOs\Habits\CreateHabitDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Habits\HabitDto.cs">
+            <Link>DTOs\Habits\HabitDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Habits\HabitMappings.cs">
+            <Link>DTOs\Habits\HabitMappings.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Habits\HabitQueries.cs">
+            <Link>DTOs\Habits\HabitQueries.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Habits\UpdateHabitDto.cs">
+            <Link>DTOs\Habits\UpdateHabitDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\Frequency.cs">
+            <Link>Entities\Frequency.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\FrequencyType.cs">
+            <Link>Entities\FrequencyType.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\Habit.cs">
+            <Link>Entities\Habit.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\HabitStatus.cs">
+            <Link>Entities\HabitStatus.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\HabitTag.cs">
+            <Link>Entities\HabitTag.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\HabitType.cs">
+            <Link>Entities\HabitType.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\Milestone.cs">
+            <Link>Entities\Milestone.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\Tag.cs">
+            <Link>Entities\Tag.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\Target.cs">
+            <Link>Entities\Target.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Extensions\DatabaseExtensions.cs">
+            <Link>Extensions\DatabaseExtensions.cs</Link>
+        </Compile>
     </ItemGroup>
 
 </Project>
