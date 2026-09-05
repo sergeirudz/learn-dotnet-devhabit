@@ -5,7 +5,7 @@ namespace DevHabit.Api.DTOs.Habits;
 
 public sealed record HabitsCollectionDto : ICollectionResponse<HabitDto>, ILinksResponse
 {
-    public List<HabitDto> Data { get; init; }
+    public List<HabitDto> Items { get; init; }
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public List<LinkDto> Links { get; set; }

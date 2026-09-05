@@ -5,7 +5,7 @@ namespace DevHabit.Api.DTOs.Tags;
 
 public sealed record TagsCollectionDto : ICollectionResponse<TagDto>, ILinksResponse
 {
-    public List<TagDto> Data { get; init; }
+    public List<TagDto> Items { get; init; }
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public List<LinkDto> Links { get; set; }

@@ -28,7 +28,7 @@ public sealed class TagsController(
 
         var habitsCollectionDto = new TagsCollectionDto
         {
-            Data = tags
+            Items = tags
         };
 
         // if (acceptHeader.IncludeLinks)

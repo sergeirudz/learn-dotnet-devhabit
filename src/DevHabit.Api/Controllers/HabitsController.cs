@@ -17,7 +17,7 @@ public sealed class HabitsController(
 {
     //! GET: habits
     [HttpGet]
-    public async Task<ActionResult<HabitDto>> GetHabits(
+    public async Task<ActionResult<PaginationResult<HabitDto>>> GetHabits(
         // http://localhost:6000/habits?q=keyword
         [FromQuery] HabitsQueryParameters query,
         SortMappingProvider sortMappingProvider
@@ -34,23 +34,21 @@ public sealed class HabitsController(
         query.Search ??= query.Search?.Trim().ToLower();
 
         SortMapping[] sortMapping = sortMappingProvider.GetMappings<HabitDto, Habit>();
-        List<HabitDto> habits = await dbContext
-            .Habits.Where(h => query.Search == null ||
-                               h.Name.ToLower().Contains(query.Search) ||
-                               h.Description != null && h.Description.ToLower().Contains(query.Search))
+
+        IQueryable<HabitDto> habitsQuery = dbContext
+            .Habits
+            .Where(h => query.Search == null ||
+                        h.Name.ToLower().Contains(query.Search) ||
+                        h.Description != null && h.Description.ToLower().Contains(query.Search))
             .Where(h => query.Type == null || h.Type == query.Type)
             .Where(h => query.Status == null || h.Status == query.Status)
-            // SORTING
             .ApplySort(query.Sort, sortMapping)
-            .Select(HabitQueries.ProjectToDto())
-            .ToListAsync();
+            .Select(HabitQueries.ProjectToDto());
 
-        var habbitsCollectionDto = new HabitsCollectionDto
-        {
-            Data = habits
-        };
+        Task<PaginationResult<HabitDto>> paginationResult =
+            PaginationResult<HabitDto>.CreateAsync(habitsQuery, query.Page, query.PageSize);
 
-        return Ok(habbitsCollectionDto);
+        return Ok(paginationResult);
     }
 
     //! GET: habits/{id}

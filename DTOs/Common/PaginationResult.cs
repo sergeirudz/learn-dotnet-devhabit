@@ -11,7 +11,7 @@ public sealed record PaginationResult<T> : ICollectionResponse<T>, ILinksRespons
     public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
     public bool HasPreviousPage => Page > 1;
     public bool HasNextPage => Page < TotalPages;
-    public List<T> Data { get; init; }
+    public List<T> Items { get; init; }
     public List<LinkDto> Links { get; set; }
 
     public static async Task<PaginationResult<T>> CreateAsync(
@@ -27,7 +27,7 @@ public sealed record PaginationResult<T> : ICollectionResponse<T>, ILinksRespons
 
         return new PaginationResult<T>
         {
-            Data = items,
+            Items = items,
             Page = page,
             PageSize = pageSize,
             TotalCount = totalCount
