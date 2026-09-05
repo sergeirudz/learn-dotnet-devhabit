@@ -1,0 +1,18 @@
+﻿using FluentValidation;
+
+namespace DevHabit.Api.DTOs.Tags;
+
+public sealed class CreateTagDtoValidator : AbstractValidator<CreateTagDto>
+{
+    public CreateTagDtoValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .MinimumLength(3)
+            .MaximumLength(50);
+
+        RuleFor(x => x.Description)
+            .MinimumLength(5)
+            .MaximumLength(500);
+    }
+}

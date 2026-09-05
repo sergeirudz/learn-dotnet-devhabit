@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <PackageReference Include="EFCore.NamingConventions"/>
+        <PackageReference Include="FluentValidation"/>
         <PackageReference Include="Microsoft.AspNetCore.JsonPatch"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
@@ -26,6 +27,18 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="..\..\DTOs\Common\ICollectionResponse.cs">
+            <Link>DTOs\Common\ICollectionResponse.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Common\ILinksResponse.cs">
+            <Link>DTOs\Common\ILinksResponse.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Common\LinkDto.cs">
+            <Link>DTOs\Common\LinkDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Common\PaginationResult.cs">
+            <Link>DTOs\Common\PaginationResult.cs</Link>
+        </Compile>
         <Compile Include="..\..\DTOs\Habits\CreateHabitDto.cs">
             <Link>DTOs\Habits\CreateHabitDto.cs</Link>
         </Compile>
@@ -38,8 +51,35 @@
         <Compile Include="..\..\DTOs\Habits\HabitQueries.cs">
             <Link>DTOs\Habits\HabitQueries.cs</Link>
         </Compile>
+        <Compile Include="..\..\DTOs\Habits\HabitWithTagsDto.cs">
+            <Link>DTOs\Habits\HabitWithTagsDto.cs</Link>
+        </Compile>
         <Compile Include="..\..\DTOs\Habits\UpdateHabitDto.cs">
             <Link>DTOs\Habits\UpdateHabitDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\HabitTags\UpsertHabitTagsDto.cs">
+            <Link>DTOs\HabitTags\UpsertHabitTagsDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Tags\CreateTagDto.cs">
+            <Link>DTOs\Tags\CreateTagDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Tags\CreateTagDtoValidator.cs">
+            <Link>DTOs\Tags\CreateTagDtoValidator.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Tags\TagDto.cs">
+            <Link>DTOs\Tags\TagDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Tags\TagMappings.cs">
+            <Link>DTOs\Tags\TagMappings.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Tags\TagQueries.cs">
+            <Link>DTOs\Tags\TagQueries.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Tags\TagsCollectionDto.cs">
+            <Link>DTOs\Tags\TagsCollectionDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Tags\UpdateTagDto.cs">
+            <Link>DTOs\Tags\UpdateTagDto.cs</Link>
         </Compile>
         <Compile Include="..\..\Entities\Frequency.cs">
             <Link>Entities\Frequency.cs</Link>
