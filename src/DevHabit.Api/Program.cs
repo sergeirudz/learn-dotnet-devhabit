@@ -3,10 +3,12 @@ using DevHabit.Api.DTOs.Habits;
 using DevHabit.Api.Entities;
 using DevHabit.Api.Extensions;
 using DevHabit.Api.Middleware;
+using DevHabit.Api.Services;
 using DevHabit.Api.Services.Sorting;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
@@ -21,7 +23,8 @@ builder.Services.AddControllers(options =>
         options.ReturnHttpNotAcceptable = true;
     })
     // Replace System.Text.Json with Newtonsoft.Json
-    .AddNewtonsoftJson()
+    .AddNewtonsoftJson(options =>
+        options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver())
     .AddXmlSerializerFormatters();
 
 // Scans assembly for anything implementing `AbstractValidator<CreateTagDto>` and register with DI
@@ -82,6 +85,8 @@ builder.Services.AddTransient<SortMappingProvider>();
 // EXPLAIN IN MORE DETAIL
 builder.Services.AddSingleton<ISortMappingDefinition, SortMappingDefinition<HabitDto, Habit>>(_ =>
     HabitMappings.SortMapping);
+
+builder.Services.AddTransient<DataShapingService>();
 
 WebApplication app = builder.Build();
 
