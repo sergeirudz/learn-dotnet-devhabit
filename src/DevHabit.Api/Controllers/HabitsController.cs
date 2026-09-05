@@ -16,15 +16,28 @@ public sealed class HabitsController(
 {
     //! GET: habits
     [HttpGet]
-    public async Task<ActionResult<HabitDto>> GetHabits()
+    public async Task<ActionResult<HabitDto>> GetHabits(
+        // http://localhost:6000/habits?q=keyword
+        [FromQuery] HabitsQueryParameters query
+    )
     {
+        query.Search ??= query.Search?.Trim().ToLower();
+
         List<HabitDto> habits = await dbContext
-            .Habits
+            .Habits.Where(h => query.Search == null ||
+                               h.Name.ToLower().Contains(query.Search) ||
+                               h.Description != null && h.Description.ToLower().Contains(query.Search))
+            .Where(h => query.Type == null || h.Type == query.Type)
+            .Where(h => query.Status == null || h.Status == query.Status)
             .Select(HabitQueries.ProjectToDto())
             .ToListAsync();
 
+        var habbitsCollectionDto = new HabitsCollectionDto
+        {
+            Data = habits
+        };
 
-        return Ok(habits);
+        return Ok(habbitsCollectionDto);
     }
 
     //! GET: habits/{id}
