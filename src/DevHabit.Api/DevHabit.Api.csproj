@@ -25,6 +25,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+
+        <PackageReference Include="System.Linq.Dynamic.Core"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -121,6 +123,10 @@
         <Compile Include="..\..\Extensions\DatabaseExtensions.cs">
             <Link>Extensions\DatabaseExtensions.cs</Link>
         </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Services\"/>
     </ItemGroup>
 
 </Project>
