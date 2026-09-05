@@ -7,6 +7,7 @@
     <ItemGroup>
         <PackageReference Include="EFCore.NamingConventions"/>
         <PackageReference Include="FluentValidation"/>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
         <PackageReference Include="Microsoft.AspNetCore.JsonPatch"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
@@ -41,6 +42,9 @@
         </Compile>
         <Compile Include="..\..\DTOs\Habits\CreateHabitDto.cs">
             <Link>DTOs\Habits\CreateHabitDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Habits\CreateHabitDtoValidator.cs">
+            <Link>DTOs\Habits\CreateHabitDtoValidator.cs</Link>
         </Compile>
         <Compile Include="..\..\DTOs\Habits\HabitDto.cs">
             <Link>DTOs\Habits\HabitDto.cs</Link>

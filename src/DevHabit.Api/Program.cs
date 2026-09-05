@@ -1,5 +1,6 @@
 using DevHabit.Api.Database;
 using DevHabit.Api.Extensions;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql;
@@ -18,6 +19,18 @@ builder.Services.AddControllers(options =>
     // Replace System.Text.Json with Newtonsoft.Json
     .AddNewtonsoftJson()
     .AddXmlSerializerFormatters();
+
+// Scans assembly for anything implementing `AbstractValidator<CreateTagDto>` and register with DI
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+// Customize the ProblemDetails response to include the requestId in the extensions
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = context =>
+    {
+        context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+    };
+});
 
 builder.Services.AddOpenApi();
 
