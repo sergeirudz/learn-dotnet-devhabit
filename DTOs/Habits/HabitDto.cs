@@ -1,14 +1,16 @@
+using DevHabit.Api.DTOs.Common;
 using DevHabit.Api.Entities;
 
 namespace DevHabit.Api.DTOs.Habits;
 
-/* 
+/*
 Record - immutable by default, unless setters are defined. Have structural equality.
 Class - mutable by default, have referential equality.
  */
-public sealed record HabitDto
+public sealed record HabitDto : ILinksResponse
 {
     public required string Id { get; init; }
+
     // public required string UserId { get; init; }
     public required string Name { get; init; }
     public string? Description { get; init; }
@@ -22,6 +24,7 @@ public sealed record HabitDto
     public required DateTime CreatedAtUtc { get; init; }
     public DateTime? UpdatedAtUtc { get; init; }
     public DateTime? LastCompletedAtUtc { get; init; }
+    public List<LinkDto> Links { get; set; }
 }
 
 public sealed record FrequencyDto
@@ -41,6 +44,3 @@ public sealed record MilestoneDto
     public required int Target { get; init; }
     public required int Current { get; init; }
 }
-
-
-
