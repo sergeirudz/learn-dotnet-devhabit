@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using DevHabit.Api.Database;
 using DevHabit.Api.DTOs.Habits;
 using DevHabit.Api.Entities;
@@ -20,7 +21,7 @@ namespace DevHabit.Api;
 
 public static class DependencyInjection
 {
-    public static WebApplicationBuilder AddControllers(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddApiServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddControllers(options =>
             {
@@ -47,6 +48,31 @@ public static class DependencyInjection
             formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.HateoasJsonV1);
             formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.HateoasJsonV2);
         });
+
+        // API Versioning
+        builder.Services.AddApiVersioning(options =>
+
+            {
+                options.DefaultApiVersion = new ApiVersion(1.0);
+                options.AssumeDefaultVersionWhenUnspecified = true; // use default version if not specified
+                options.ReportApiVersions = true; // return supported versions in response headers
+                // options.ApiVersionSelector = new CurrentImplementationApiVersionSelector(options); // detect which API version to use, the latest API version implemented will be used
+                options.ApiVersionSelector =
+                    new DefaultApiVersionSelector(options); // use default version if not specified
+
+                // [Route("v{version:apiVersion}/habits")]
+                // options.ApiVersionReader = new UrlSegmentApiVersionReader(); // read version from URL segment  /v1/
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                    new MediaTypeApiVersionReader(),
+                    new MediaTypeApiVersionReaderBuilder()
+                        .Template("application/vnd.dev-habit.hateoas.{version}+json")
+                        .Build()
+
+                    // new UrlSegmentApiVersionReader(), // read version from URL segment
+                    // new HeaderApiVersionReader("x-api-version") // read version from custom header
+                );
+            })
+            .AddMvc();
 
         builder.Services.AddOpenApi();
         return builder;

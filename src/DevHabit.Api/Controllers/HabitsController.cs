@@ -1,4 +1,5 @@
 using System.Dynamic;
+using Asp.Versioning;
 using DevHabit.Api.Database;
 using DevHabit.Api.DTOs.Common;
 using DevHabit.Api.DTOs.Habits;
@@ -14,6 +15,9 @@ namespace DevHabit.Api.Controllers;
 
 [ApiController]
 [Route("habits")]
+// [Route("v.{version:apiVersion}/habits")]
+[ApiVersion(1.0)] // default
+// [ApiVersion(2.0)]
 public sealed class HabitsController(
     ApplicationDbContext dbContext,
     LinkService linkService
@@ -101,6 +105,7 @@ public sealed class HabitsController(
 
     //! GET: habits/{id}
     [HttpGet("{id}")]
+    [MapToApiVersion(1.0)]
     public async Task<IActionResult> GetHabit(
         string id,
         string? fields,
@@ -131,6 +136,52 @@ public sealed class HabitsController(
         {
             LinkDto[] links = CreateLinksForHabit(id, fields).ToArray();
             shapedHabitDto.TryAdd("links", links);
+        }
+
+        return Ok(shapedHabitDto);
+    }
+
+
+    /// <summary>
+    ///     Retrieves a specific habit by ID with version 2 of the API
+    /// </summary>
+    /// <param name="id">The habit ID</param>
+    /// <param name="query">Query parameters for data shaping</param>
+    /// <param name="dataShapingService">Service for data shaping</param>
+    /// <returns>The requested habit</returns>
+    [HttpGet("{id}")]
+    [ApiVersion(2.0)] // Asp.Versioning;
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetHabitV2(
+        string id,
+        [FromQuery] HabitQueryParameters query,
+        DataShapingService dataShapingService)
+    {
+        if (!dataShapingService.Validate<HabitWithTagsDtoV2>(query.Fields))
+        {
+            return Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                detail: $"The provided data shaping fields aren't valid: '{query.Fields}'");
+        }
+
+        HabitWithTagsDtoV2? habit = await dbContext
+            .Habits
+            .Where(h => h.Id == id)
+            .Select(HabitQueries.ProjectToDtoWithTagsV2())
+            .FirstOrDefaultAsync();
+
+        if (habit is null)
+        {
+            return NotFound();
+        }
+
+        ExpandoObject shapedHabitDto = dataShapingService.ShapeData(habit, query.Fields);
+
+        if (query.IncludeLinks)
+        {
+            ((IDictionary<string, object?>)shapedHabitDto)[nameof(ILinksResponse.Links)] =
+                CreateLinksForHabit(id, query.Fields);
         }
 
         return Ok(shapedHabitDto);
