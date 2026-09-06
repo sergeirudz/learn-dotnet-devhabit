@@ -5,6 +5,8 @@ using DevHabit.Api.Middleware;
 using DevHabit.Api.Services;
 using DevHabit.Api.Services.Sorting;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Newtonsoft.Json.Serialization;
@@ -22,12 +24,29 @@ public static class DependencyInjection
     {
         builder.Services.AddControllers(options =>
             {
-                options.ReturnHttpNotAcceptable = true;
+                // Accept application/json
+                options.ReturnHttpNotAcceptable = true; // return 406 when unsupported format is requested
             })
-            // Replace System.Text.Json with Newtonsoft.Json
+            // add support for JSON Patch. Will replace default ASP.NET systemtext.json serializer
             .AddNewtonsoftJson(options =>
-                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver())
-            .AddXmlSerializerFormatters();
+                options.SerializerSettings.ContractResolver =
+                    new CamelCasePropertyNamesContractResolver()) // this will make sure JSON properties are camelCase
+            .AddXmlSerializerFormatters(); // add XML formatter support. Header "Accept: application/xml"
+
+        // Accept application/vnd.dev-habit.hateoas+json
+        builder.Services.Configure<MvcOptions>(options =>
+        {
+            NewtonsoftJsonOutputFormatter formatter = options.OutputFormatters
+                .OfType<NewtonsoftJsonOutputFormatter>()
+                .First();
+
+            // This allows to set multiple supported API versions
+            formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.JsonV1);
+            formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.JsonV2);
+            formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.HateoasJson);
+            formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.HateoasJsonV1);
+            formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.HateoasJsonV2);
+        });
 
         builder.Services.AddOpenApi();
         return builder;

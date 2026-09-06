@@ -16,4 +16,6 @@ public sealed record HabitsQueryParameters
 
     // set max page size to 10 by default
     public int PageSize { get; init; } = 10;
+
+    [FromHeader(Name = "Accept")] public string? Accept { get; init; }
 }

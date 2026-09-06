@@ -21,6 +21,9 @@ public sealed class HabitsController(
 {
     //! GET: habits
     [HttpGet]
+    // Use Produces custom media types then we can omit formatter.SupportedMediaTypes.Add(CustomMediaTypeNames.Application.HateoasJson);
+    // From DependencyInjection.cs globally supported media type
+    // [Produces(MediaTypeNames.Application.Json, CustomMediaTypeNames.Application.HateoasJson)]
     public async Task<IActionResult> GetHabits(
         // http://localhost:6000/habits?q=keyword
         [FromQuery] HabitsQueryParameters query,
@@ -64,12 +67,16 @@ public sealed class HabitsController(
             .Take(query.PageSize)
             .ToListAsync();
 
+        // This is needed if HATEOAS links are requested
+        // Accept application/vnd.dev-habit.hateoas+json
+        bool includeLinks = query.Accept == CustomMediaTypeNames.Application.HateoasJson;
+
         var paginationResult = new PaginationResult<ExpandoObject>
         {
             Items = dataShapingService.ShapeCollectionData(
                 habits,
                 query.Fields,
-                h => CreateLinksForHabit(h.Id, query.Fields)
+                includeLinks ? h => CreateLinksForHabit(h.Id, query.Fields) : null
             ),
             Page = query.Page,
             PageSize = query.PageSize,
@@ -80,13 +87,26 @@ public sealed class HabitsController(
             query,
             paginationResult.HasNextPage,
             paginationResult.HasPreviousPage);
+
+        if (includeLinks)
+        {
+            paginationResult.Links = CreateLinksForHabits(
+                query,
+                paginationResult.HasNextPage,
+                paginationResult.HasPreviousPage);
+        }
+
         return Ok(paginationResult);
     }
 
     //! GET: habits/{id}
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetHabit(string id, string? fields,
-        DataShapingService dataShapingService)
+    public async Task<IActionResult> GetHabit(
+        string id,
+        string? fields,
+        DataShapingService dataShapingService,
+        [FromHeader(Name = "Accept")] string? accept
+    )
     {
         if (!dataShapingService.Validate<HabitWithTagsDto>(fields))
         {
@@ -107,14 +127,20 @@ public sealed class HabitsController(
 
         ExpandoObject shapedHabitDto = dataShapingService.ShapeData(habit, fields);
 
-        LinkDto[] links = CreateLinksForHabit(id, fields).ToArray();
-        shapedHabitDto.TryAdd("links", links);
+        if (accept == CustomMediaTypeNames.Application.HateoasJson)
+        {
+            LinkDto[] links = CreateLinksForHabit(id, fields).ToArray();
+            shapedHabitDto.TryAdd("links", links);
+        }
+
         return Ok(shapedHabitDto);
     }
 
 
     //! POST: habits
     [HttpPost]
+    // Use Consumes to define media types for different API requests that you want to support on API
+    // [Consumes(CustomMediaTypeNames.Application.HateoasJson)]
     public async Task<ActionResult> CreateHabit(
         [FromBody] CreateHabitDto createHabitDto,
         IValidator<CreateHabitDto> validator
