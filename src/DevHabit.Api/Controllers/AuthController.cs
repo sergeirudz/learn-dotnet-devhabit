@@ -2,6 +2,7 @@ using DevHabit.Api.Database;
 using DevHabit.Api.DTOs.Auth;
 using DevHabit.Api.DTOs.Users;
 using DevHabit.Api.Entities;
+using DevHabit.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,12 @@ public class AuthController(
     // Built in: Allow to interact with users table
     UserManager<IdentityUser> userManager,
     ApplicationIdentityDbContext identityDbContext,
-    ApplicationDbContext applicationDbContext
+    ApplicationDbContext applicationDbContext,
+    TokenProvider tokenProvider
 ) : ControllerBase
 {
     [HttpPost("register")]
-    public async Task<IActionResult> Register(
+    public async Task<ActionResult<AccessTokensDto>> Register(
         RegisterUserDto registerUserDto)
     {
         using IDbContextTransaction transaction = await identityDbContext.Database.BeginTransactionAsync();
@@ -47,7 +49,7 @@ public class AuthController(
             var extensions = new Dictionary<string, object?>
             {
                 {
-                    "erros", identityResult.Errors.ToDictionary(e => e.Code, e => e.Description)
+                    "errors", identityResult.Errors.ToDictionary(e => e.Code, e => e.Description)
                 }
             };
             return Problem(
@@ -65,6 +67,25 @@ public class AuthController(
         // Now both are persisted in one DB transaction 
         await transaction.CommitAsync();
 
-        return Ok(user.Id);
+        var tokenRequest = new TokenRequest(identityUser.Id, identityUser.Email);
+        AccessTokensDto accessTokens = tokenProvider.Create(tokenRequest);
+
+        return Ok(accessTokens);
+    }
+
+    [HttpPost("login")]
+    public async Task<ActionResult<AccessTokensDto>> Login(LoginUserDto loginUserDto)
+    {
+        IdentityUser? identityUser = await userManager.FindByEmailAsync(loginUserDto.Email);
+
+        if (identityUser is null || !await userManager.CheckPasswordAsync(identityUser, loginUserDto.Password))
+        {
+            return Unauthorized();
+        }
+
+        var tokenRequest = new TokenRequest(identityUser.Id, identityUser.Email!);
+
+        AccessTokensDto accessTokens = tokenProvider.Create(tokenRequest);
+        return Ok(accessTokens);
     }
 }
