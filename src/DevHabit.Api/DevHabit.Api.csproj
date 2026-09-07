@@ -9,6 +9,7 @@
         <PackageReference Include="EFCore.NamingConventions"/>
         <PackageReference Include="FluentValidation"/>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"/>
         <PackageReference Include="Microsoft.AspNetCore.JsonPatch"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
@@ -31,6 +32,30 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="..\..\DTOs\Auth\AccessTokensDto.cs">
+            <Link>DTOs\Auth\AccessTokensDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Auth\LoginUserDto.cs">
+            <Link>DTOs\Auth\LoginUserDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Auth\LoginUserDtoValidator.cs">
+            <Link>DTOs\Auth\LoginUserDtoValidator.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Auth\RefreshTokenDto.cs">
+            <Link>DTOs\Auth\RefreshTokenDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Auth\RefreshTokenDtoValidator.cs">
+            <Link>DTOs\Auth\RefreshTokenDtoValidator.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Auth\RegisterUserDto.cs">
+            <Link>DTOs\Auth\RegisterUserDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Auth\RegisterUserDtoValidator.cs">
+            <Link>DTOs\Auth\RegisterUserDtoValidator.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Auth\TokenRequest.cs">
+            <Link>DTOs\Auth\TokenRequest.cs</Link>
+        </Compile>
         <Compile Include="..\..\DTOs\Common\AcceptHeaderDto.cs">
             <Link>DTOs\Common\AcceptHeaderDto.cs</Link>
         </Compile>
@@ -103,6 +128,21 @@
         <Compile Include="..\..\DTOs\Tags\UpdateTagDto.cs">
             <Link>DTOs\Tags\UpdateTagDto.cs</Link>
         </Compile>
+        <Compile Include="..\..\DTOs\Users\UpdateUserProfileDto.cs">
+            <Link>DTOs\Users\UpdateUserProfileDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Users\UpdateUserProfileDtoValidator.cs">
+            <Link>DTOs\Users\UpdateUserProfileDtoValidator.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Users\UserDto.cs">
+            <Link>DTOs\Users\UserDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Users\UserMappings.cs">
+            <Link>DTOs\Users\UserMappings.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Users\UserQueries.cs">
+            <Link>DTOs\Users\UserQueries.cs</Link>
+        </Compile>
         <Compile Include="..\..\Entities\Frequency.cs">
             <Link>Entities\Frequency.cs</Link>
         </Compile>
@@ -124,11 +164,20 @@
         <Compile Include="..\..\Entities\Milestone.cs">
             <Link>Entities\Milestone.cs</Link>
         </Compile>
+        <Compile Include="..\..\Entities\Roles.cs">
+            <Link>Entities\Roles.cs</Link>
+        </Compile>
         <Compile Include="..\..\Entities\Tag.cs">
             <Link>Entities\Tag.cs</Link>
         </Compile>
         <Compile Include="..\..\Entities\Target.cs">
             <Link>Entities\Target.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\User.cs">
+            <Link>Entities\User.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Extensions\ClaimsPrincipalExtensions.cs">
+            <Link>Extensions\ClaimsPrincipalExtensions.cs</Link>
         </Compile>
         <Compile Include="..\..\Extensions\DatabaseExtensions.cs">
             <Link>Extensions\DatabaseExtensions.cs</Link>

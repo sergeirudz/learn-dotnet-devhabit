@@ -43,7 +43,7 @@ internal static class HabitQueries
         };
     }
 
-    public static Expression<Func<Habit, HabitWithTagsDto>> ProjectToHabitWithTagsDto()
+    public static Expression<Func<Habit, HabitWithTagsDto>> ProjectToDtoWithTags()
     {
         return h => new HabitWithTagsDto
         {

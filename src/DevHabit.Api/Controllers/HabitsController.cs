@@ -1,4 +1,5 @@
 using System.Dynamic;
+using System.Net.Mime;
 using Asp.Versioning;
 using DevHabit.Api.Database;
 using DevHabit.Api.DTOs.Common;
@@ -18,6 +19,14 @@ namespace DevHabit.Api.Controllers;
 // [Route("v.{version:apiVersion}/habits")]
 [ApiVersion(1.0)] // default
 // [ApiVersion(2.0)]
+[Produces(
+    MediaTypeNames.Application.Json,
+    CustomMediaTypeNames.Application.JsonV1,
+    CustomMediaTypeNames.Application.JsonV2,
+    CustomMediaTypeNames.Application.HateoasJson,
+    CustomMediaTypeNames.Application.HateoasJsonV1,
+    CustomMediaTypeNames.Application.HateoasJsonV2
+)] // can be set here instead of inside API
 public sealed class HabitsController(
     ApplicationDbContext dbContext,
     LinkService linkService
@@ -35,7 +44,6 @@ public sealed class HabitsController(
         DataShapingService dataShapingService
     )
     {
-        // Validate the sort parameter is correct
         if (!sortMappingProvider.ValidateMappings<HabitDto, Habit>(query.Sort))
         {
             return Problem(
@@ -51,25 +59,28 @@ public sealed class HabitsController(
                 detail: $"The provided fields parameter isn't valid: '{query.Fields}'");
         }
 
-        query.Search ??= query.Search?.Trim().ToLower();
+        // Normalize search query: trim whitespace and convert to lowercase for case-insensitive comparison
+        string? searchQuery = query.Search?.Trim().ToLower();
 
-        SortMapping[] sortMapping = sortMappingProvider.GetMappings<HabitDto, Habit>();
+        SortMapping[] sortMappings = sortMappingProvider.GetMappings<HabitDto, Habit>();
+
+        // IQueryable<Habit> query = dbContext.Habits;
 
         IQueryable<HabitDto> habitsQuery = dbContext
-            .Habits
-            .Where(h => query.Search == null ||
-                        h.Name.ToLower().Contains(query.Search) ||
-                        h.Description != null && h.Description.ToLower().Contains(query.Search))
+            .Habits.Where(h => searchQuery == null ||
+                               h.Name.ToLower().Contains(searchQuery) ||
+                               h.Description != null && h.Description.ToLower().Contains(searchQuery))
             .Where(h => query.Type == null || h.Type == query.Type)
             .Where(h => query.Status == null || h.Status == query.Status)
-            .ApplySort(query.Sort, sortMapping)
+            .ApplySort(query.Sort, sortMappings)
             .Select(HabitQueries.ProjectToDto());
 
-        int totalCount = await habitsQuery.CountAsync();
 
-        List<HabitDto> habits = await habitsQuery.Skip((query.Page - 1) * query.PageSize)
-            .Take(query.PageSize)
-            .ToListAsync();
+        int totalCount = await habitsQuery.CountAsync();
+        List<HabitDto> habits = await habitsQuery
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize).ToListAsync();
+
 
         // This is needed if HATEOAS links are requested
         // Accept application/vnd.dev-habit.hateoas+json
@@ -77,6 +88,7 @@ public sealed class HabitsController(
 
         var paginationResult = new PaginationResult<ExpandoObject>
         {
+            // CreateLinksForHabit will allow to include HATEOAS links for data shaping responses
             Items = dataShapingService.ShapeCollectionData(
                 habits,
                 query.Fields,
@@ -87,10 +99,6 @@ public sealed class HabitsController(
             TotalCount = totalCount
         };
 
-        paginationResult.Links = CreateLinksForHabits(
-            query,
-            paginationResult.HasNextPage,
-            paginationResult.HasPreviousPage);
 
         if (includeLinks)
         {
@@ -99,6 +107,7 @@ public sealed class HabitsController(
                 paginationResult.HasNextPage,
                 paginationResult.HasPreviousPage);
         }
+
 
         return Ok(paginationResult);
     }
@@ -109,21 +118,24 @@ public sealed class HabitsController(
     public async Task<IActionResult> GetHabit(
         string id,
         string? fields,
-        DataShapingService dataShapingService,
-        [FromHeader(Name = "Accept")] string? accept
+        [FromQuery] HabitQueryParameters query,
+        DataShapingService dataShapingService
+        // [FromHeader(Name = "Accept")] string? accept
     )
     {
-        if (!dataShapingService.Validate<HabitWithTagsDto>(fields))
+        if (!dataShapingService.Validate<HabitDto>(fields))
         {
             return Problem(
                 statusCode: StatusCodes.Status400BadRequest,
                 detail: $"The provided fields parameter isn't valid: '{fields}'");
         }
 
+
         HabitWithTagsDto? habit = await dbContext
             .Habits
-            .Select(HabitQueries.ProjectToHabitWithTagsDto())
-            .FirstOrDefaultAsync(h => h.Id == id);
+            .Where(h => h.Id == id)
+            .Select(HabitQueries.ProjectToDtoWithTags())
+            .FirstOrDefaultAsync();
 
         if (habit is null)
         {
@@ -132,9 +144,9 @@ public sealed class HabitsController(
 
         ExpandoObject shapedHabitDto = dataShapingService.ShapeData(habit, fields);
 
-        if (accept == CustomMediaTypeNames.Application.HateoasJson)
+        if (query.IncludeLinks)
         {
-            LinkDto[] links = CreateLinksForHabit(id, fields).ToArray();
+            List<LinkDto> links = CreateLinksForHabit(id, query.Fields);
             shapedHabitDto.TryAdd("links", links);
         }
 

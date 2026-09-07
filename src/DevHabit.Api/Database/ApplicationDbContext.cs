@@ -9,7 +9,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Tag> Tags { get; set; }
 
     public DbSet<HabitTag> HabitTags { get; set; }
-    // public DbSet<User> Users { get; set; }
+
+    public DbSet<User> Users { get; set; }
     // public DbSet<GitHubAccessToken> GitHubAccessTokens { get; set; }
     // public DbSet<Entry> Entries { get; set; }
     // public DbSet<EntryImportJob> EntryImportJobs { get; set; }
@@ -22,7 +23,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
             /*
              ApplyConfigurationsFromAssembly scans the entire assembly (DLL)
              that contains ApplicationDbContext and automatically discovers all
-             classes that implement IEntityTypeConfiguration<TEntity> 
+             classes that implement IEntityTypeConfiguration<TEntity>
              — like HabitConfiguration : IEntityTypeConfiguration<Habit>.
              */
             .Assembly);
