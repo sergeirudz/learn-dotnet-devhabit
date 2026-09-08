@@ -238,17 +238,17 @@ public static class DependencyInjection
         //    pipeline.AddTimeout(TimeSpan.FromSeconds(1));
         //});
 
-        // builder.Services.Configure<EncryptionOptions>(
-        //     builder.Configuration.GetSection(EncryptionOptions.SectionName));
-        // builder.Services.AddTransient<EncryptionService>();
-        //
-        // builder.Services.Configure<GitHubAutomationOptions>(
-        //     builder.Configuration.GetSection(GitHubAutomationOptions.SectionName));
-        //
-        // builder.Services.Configure<TagsOptions>(
-        //     builder.Configuration.GetSection(TagsOptions.SectionName));
-        //
-        // builder.Services.AddSingleton<InMemoryETagStore>();
+        builder.Services.Configure<EncryptionOptions>(
+            builder.Configuration.GetSection(EncryptionOptions.SectionName));
+        builder.Services.AddTransient<EncryptionService>();
+
+        builder.Services.Configure<GitHubAutomationOptions>(
+            builder.Configuration.GetSection(GitHubAutomationOptions.SectionName));
+
+        builder.Services.Configure<TagsOptions>(
+            builder.Configuration.GetSection(TagsOptions.SectionName));
+
+        builder.Services.AddSingleton<InMemoryETagStore>();
 
         return builder;
     }

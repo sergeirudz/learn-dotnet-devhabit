@@ -6,8 +6,8 @@ namespace DevHabit.Api.Services;
 
 public sealed class EncryptionService(IOptions<EncryptionOptions> options)
 {
+    private const int IvSize = 16; // Adds random variance to encryption
     private readonly byte[] _masterKey = Convert.FromBase64String(options.Value.Key);
-    private const int IvSize = 16;
 
     public string Encrypt(string plainText)
     {
