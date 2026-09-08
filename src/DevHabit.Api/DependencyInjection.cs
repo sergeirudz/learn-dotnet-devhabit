@@ -175,6 +175,9 @@ public static class DependencyInjection
         builder.Services.AddTransient<LinkService>();
 
         builder.Services.AddTransient<TokenProvider>();
+        builder.Services.AddScoped<UserContext>();
+
+        builder.Services.AddMemoryCache();
 
         builder.Services.Configure<TagsOptions>(
             builder.Configuration.GetSection(TagsOptions.SectionName));

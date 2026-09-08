@@ -16,11 +16,12 @@ internal static class TagMappings
         };
     }
 
-    public static Tag ToEntity(this CreateTagDto dto)
+    public static Tag ToEntity(this CreateTagDto dto, string userId)
     {
         Tag habit = new()
         {
             Id = Tag.NewId(),
+            UserId = userId,
             Name = dto.Name,
             Description = dto.Description,
             CreatedAtUtc = DateTime.UtcNow

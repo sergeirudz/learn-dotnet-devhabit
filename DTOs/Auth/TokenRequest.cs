@@ -2,6 +2,6 @@
 
 public sealed record TokenRequest(
     string UserId,
-    string Email
-    // IEnumerable<string> Roles
+    string Email,
+    IEnumerable<string> Roles
 );

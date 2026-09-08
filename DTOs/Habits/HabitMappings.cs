@@ -71,11 +71,12 @@ internal static class HabitMappings
 
     // This will allow to set initial fields here
     // DTO -> Entity
-    public static Habit ToEntity(this CreateHabitDto dto)
+    public static Habit ToEntity(this CreateHabitDto dto, string userId)
     {
         Habit habit = new()
         {
             Id = $"h_{Guid.CreateVersion7()}",
+            UserId = userId,
             Name = dto.Name,
             Description = dto.Description,
             Type = dto.Type,

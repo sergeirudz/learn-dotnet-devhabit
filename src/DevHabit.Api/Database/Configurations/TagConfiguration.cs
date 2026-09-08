@@ -17,6 +17,10 @@ public sealed class TagConfiguration : IEntityTypeConfiguration<Tag>
         builder.Property(t => t.Description).HasMaxLength(500);
 
         // not allowed to create two tags with the same name for the same user
-        builder.HasIndex(t => new { t.Name }).IsUnique();
+        builder.HasIndex(t => new { t.UserId, t.Name }).IsUnique();
+
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(t => t.UserId);
     }
 }

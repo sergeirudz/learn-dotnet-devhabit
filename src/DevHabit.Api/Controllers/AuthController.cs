@@ -70,7 +70,7 @@ public class AuthController(
 
         await applicationDbContext.SaveChangesAsync();
 
-        var tokenRequest = new TokenRequest(identityUser.Id, identityUser.Email);
+        var tokenRequest = new TokenRequest(identityUser.Id, identityUser.Email, Array.Empty<string>());
         AccessTokensDto accessTokens = tokenProvider.Create(tokenRequest);
 
         var refreshToken = new RefreshToken
@@ -100,7 +100,7 @@ public class AuthController(
             return Unauthorized();
         }
 
-        var tokenRequest = new TokenRequest(identityUser.Id, identityUser.Email!);
+        var tokenRequest = new TokenRequest(identityUser.Id, identityUser.Email!, Array.Empty<string>());
 
         AccessTokensDto accessTokens = tokenProvider.Create(tokenRequest);
         return Ok(accessTokens);
@@ -124,7 +124,7 @@ public class AuthController(
             return Unauthorized();
         }
 
-        var tokenRequest = new TokenRequest(refreshToken.User.Id, refreshToken.User.Email!);
+        var tokenRequest = new TokenRequest(refreshToken.User.Id, refreshToken.User.Email!, Array.Empty<string>());
         AccessTokensDto accessTokens = tokenProvider.Create(tokenRequest);
 
         // Override value of existing access token, its one way.
