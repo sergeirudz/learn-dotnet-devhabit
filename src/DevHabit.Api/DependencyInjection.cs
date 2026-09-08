@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text;
 using Asp.Versioning;
 using DevHabit.Api.Database;
@@ -177,10 +178,77 @@ public static class DependencyInjection
         builder.Services.AddTransient<TokenProvider>();
         builder.Services.AddScoped<UserContext>();
 
+        builder.Services.AddScoped<GitHubAccessTokenService>();
+        builder.Services.AddTransient<GitHubService>();
+
         builder.Services.AddMemoryCache();
 
         builder.Services.Configure<TagsOptions>(
             builder.Configuration.GetSection(TagsOptions.SectionName));
+
+
+        builder.Services.AddHttpClient().ConfigureHttpClientDefaults(b => b.AddStandardResilienceHandler());
+        builder.Services.AddTransient<RefitGitHubService>();
+        builder.Services
+            .AddHttpClient("github")
+            .ConfigureHttpClient(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration.GetSection("GitHub:BaseUrl").Get<string>()!);
+
+                client.DefaultRequestHeaders
+                    .UserAgent.Add(new ProductInfoHeaderValue("DevHabit", "1.0"));
+
+                client.DefaultRequestHeaders
+                    .Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+            });
+
+        //builder.Services.AddTransient<DelayHandler>();
+        // builder.Services
+        //     .AddRefitClient<IGitHubApi>(new RefitSettings
+        //     {
+        //         ContentSerializer = new NewtonsoftJsonContentSerializer()
+        //     })
+        //     .ConfigureHttpClient(client =>
+        //     {
+        //         client.BaseAddress = new Uri(builder.Configuration.GetSection("GitHub:BaseUrl").Get<string>()!);
+        //     });
+        //.AddHttpMessageHandler<DelayHandler>();
+        //.InternalRemoveAllResilienceHandlers()
+        // Configuring a custom resilience pipeline for the GitHub API client
+        //.AddResilienceHandler("custom", pipeline =>
+        //{
+        //    pipeline.AddTimeout(TimeSpan.FromSeconds(5));
+
+        //    pipeline.AddRetry(new HttpRetryStrategyOptions
+        //    {
+        //        MaxRetryAttempts = 3,
+        //        BackoffType = DelayBackoffType.Exponential,
+        //        UseJitter = true,
+        //        Delay = TimeSpan.FromMilliseconds(500)
+        //    });
+
+        //    pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
+        //    {
+        //        SamplingDuration = TimeSpan.FromSeconds(10),
+        //        FailureRatio = 0.9,
+        //        MinimumThroughput = 5,
+        //        BreakDuration = TimeSpan.FromSeconds(5)
+        //    });
+
+        //    pipeline.AddTimeout(TimeSpan.FromSeconds(1));
+        //});
+
+        // builder.Services.Configure<EncryptionOptions>(
+        //     builder.Configuration.GetSection(EncryptionOptions.SectionName));
+        // builder.Services.AddTransient<EncryptionService>();
+        //
+        // builder.Services.Configure<GitHubAutomationOptions>(
+        //     builder.Configuration.GetSection(GitHubAutomationOptions.SectionName));
+        //
+        // builder.Services.Configure<TagsOptions>(
+        //     builder.Configuration.GetSection(TagsOptions.SectionName));
+        //
+        // builder.Services.AddSingleton<InMemoryETagStore>();
 
         return builder;
     }

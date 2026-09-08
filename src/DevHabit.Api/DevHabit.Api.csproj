@@ -14,6 +14,7 @@
         <PackageReference Include="Microsoft.AspNetCore.JsonPatch"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+        <PackageReference Include="Microsoft.Extensions.Http.Resilience"/>
         <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
         <PackageReference Include="Npgsql.OpenTelemetry"/>
@@ -28,6 +29,10 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+
+        <PackageReference Include="Quartz"/>
+
+        <PackageReference Include="Refit"/>
 
         <PackageReference Include="System.Linq.Dynamic.Core"/>
     </ItemGroup>
@@ -71,6 +76,18 @@
         </Compile>
         <Compile Include="..\..\DTOs\Common\PaginationResult.cs">
             <Link>DTOs\Common\PaginationResult.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\GitHub\GitHubEventDto.cs">
+            <Link>DTOs\GitHub\GitHubEventDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\GitHub\GitHubUserProfileDto.cs">
+            <Link>DTOs\GitHub\GitHubUserProfileDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\GitHub\StoreGitHubAccessTokenDto.cs">
+            <Link>DTOs\GitHub\StoreGitHubAccessTokenDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\GitHub\StoreGitHubAccessTokenDtoValidator.cs">
+            <Link>DTOs\GitHub\StoreGitHubAccessTokenDtoValidator.cs</Link>
         </Compile>
         <Compile Include="..\..\DTOs\Habits\CreateHabitDto.cs">
             <Link>DTOs\Habits\CreateHabitDto.cs</Link>
@@ -149,6 +166,9 @@
         </Compile>
         <Compile Include="..\..\Entities\FrequencyType.cs">
             <Link>Entities\FrequencyType.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\GitHubAccessToken.cs">
+            <Link>Entities\GitHubAccessToken.cs</Link>
         </Compile>
         <Compile Include="..\..\Entities\Habit.cs">
             <Link>Entities\Habit.cs</Link>
