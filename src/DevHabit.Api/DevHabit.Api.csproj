@@ -165,6 +165,9 @@
         <Compile Include="..\..\Entities\Milestone.cs">
             <Link>Entities\Milestone.cs</Link>
         </Compile>
+        <Compile Include="..\..\Entities\RefreshToken.cs">
+            <Link>Entities\RefreshToken.cs</Link>
+        </Compile>
         <Compile Include="..\..\Entities\Roles.cs">
             <Link>Entities\Roles.cs</Link>
         </Compile>
