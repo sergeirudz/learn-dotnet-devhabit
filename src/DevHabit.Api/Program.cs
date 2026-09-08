@@ -18,6 +18,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     // Run migrations when I start the app in development environment
     await app.ApplyMigrationsAsync(); // src/DevHabit.Api/Extensions/DatabaseExtensions.cs
+
+    await app.SeedInitialDataAsync();
 }
 
 app.UseHttpsRedirection();

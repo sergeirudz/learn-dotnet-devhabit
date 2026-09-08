@@ -1,16 +1,17 @@
 using DevHabit.Api.Database;
 using DevHabit.Api.DTOs.HabitTags;
 using DevHabit.Api.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DevHabit.Api.Controllers;
 
+[Authorize(Roles = Roles.Member)]
 [ApiController]
 [Route("habits/{habitId}/tags")]
 public sealed class HabitTagsController(ApplicationDbContext dbContext) : ControllerBase
 {
-
     public static readonly string Name = nameof(HabitTagsController).Replace("Controller", string.Empty);
 
     //! PUT: habits/{id}/tags
@@ -21,8 +22,8 @@ public sealed class HabitTagsController(ApplicationDbContext dbContext) : Contro
     )
     {
         Habit? habit = await dbContext.Habits
-        .Include(h => h.HabitTags)
-        .FirstOrDefaultAsync(h => h.Id == habitId);
+            .Include(h => h.HabitTags)
+            .FirstOrDefaultAsync(h => h.Id == habitId);
 
 
         if (habit is null)
@@ -40,10 +41,10 @@ public sealed class HabitTagsController(ApplicationDbContext dbContext) : Contro
 
         // Verify all tagsIds exist in the DB
         List<string> existingTagIds = await dbContext
-        .Tags
-        .Where(t => upsertHabitTagsDto.TagIds.Contains(t.Id))
-        .Select(t => t.Id)
-        .ToListAsync();
+            .Tags
+            .Where(t => upsertHabitTagsDto.TagIds.Contains(t.Id))
+            .Select(t => t.Id)
+            .ToListAsync();
 
         if (existingTagIds.Count != upsertHabitTagsDto.TagIds.Count)
         {
@@ -68,11 +69,11 @@ public sealed class HabitTagsController(ApplicationDbContext dbContext) : Contro
     //! DELETE: habits/{id}/tags/:tagId
     [HttpDelete("{tagId}")]
     public async Task<ActionResult> DeleteHabitTag(string habitId,
-    string tagId
+        string tagId
     )
     {
         HabitTag? habitTag = await dbContext.HabitTags
-         .SingleOrDefaultAsync(ht => ht.HabitId == habitId && ht.TagId == tagId);
+            .SingleOrDefaultAsync(ht => ht.HabitId == habitId && ht.TagId == tagId);
 
         if (habitTag is null)
         {

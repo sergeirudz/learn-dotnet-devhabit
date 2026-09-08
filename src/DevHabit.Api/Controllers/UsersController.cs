@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DevHabit.Api.Controllers;
 
+[Authorize(Roles = Roles.Member)] //$"{Roles.Admin},{Roles.Member}"     
 [ApiController]
 [Route("users")]
 public sealed class UsersController(

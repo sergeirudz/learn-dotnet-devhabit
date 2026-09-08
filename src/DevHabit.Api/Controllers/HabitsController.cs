@@ -8,12 +8,14 @@ using DevHabit.Api.Entities;
 using DevHabit.Api.Services;
 using DevHabit.Api.Services.Sorting;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DevHabit.Api.Controllers;
 
+[Authorize(Roles = Roles.Member)]
 [ApiController]
 [Route("habits")]
 // [Route("v.{version:apiVersion}/habits")]
@@ -393,6 +395,9 @@ public sealed class HabitsController(
 
     private List<LinkDto> CreateLinksForHabit(string id, string? fields)
     {
+        // To customize hypermedia responses, check which roles the current user is in
+        // User.IsInRole(Roles.Member); if Member then include specific HATEOAS link
+
         List<LinkDto> links =
         [
             linkService.Create(nameof(GetHabit), "self", HttpMethods.Get, new { id, fields }),
