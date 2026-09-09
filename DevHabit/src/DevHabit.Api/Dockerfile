@@ -7,7 +7,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-# Copy Directory.*.props from repository root (context is repo root in docker-compose)
+# Copy Directory.*.props from DevHabit root (build context is DevHabit/ via docker-compose)
 COPY ["Directory.Packages.props", "."]
 COPY ["Directory.Build.props", "."]
 # Copy project file
