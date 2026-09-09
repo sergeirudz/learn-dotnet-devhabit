@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc"/>
+        <PackageReference Include="CsvHelper"/>
         <PackageReference Include="EFCore.NamingConventions"/>
         <PackageReference Include="FluentValidation"/>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
@@ -76,6 +77,72 @@
         </Compile>
         <Compile Include="..\..\DTOs\Common\PaginationResult.cs">
             <Link>DTOs\Common\PaginationResult.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\CreateEntryBatchDto.cs">
+            <Link>DTOs\Entries\CreateEntryBatchDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\CreateEntryBatchDtoValidator.cs">
+            <Link>DTOs\Entries\CreateEntryBatchDtoValidator.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\CreateEntryDto.cs">
+            <Link>DTOs\Entries\CreateEntryDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\CreateEntryDtoValidator.cs">
+            <Link>DTOs\Entries\CreateEntryDtoValidator.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\DailyStatsDto.cs">
+            <Link>DTOs\Entries\DailyStatsDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\EntriesCursorQueryParameters.cs">
+            <Link>DTOs\Entries\EntriesCursorQueryParameters.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\EntriesQueryParameters.cs">
+            <Link>DTOs\Entries\EntriesQueryParameters.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\EntryCursorDto.cs">
+            <Link>DTOs\Entries\EntryCursorDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\EntryDto.cs">
+            <Link>DTOs\Entries\EntryDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\EntryHabitDto.cs">
+            <Link>DTOs\Entries\EntryHabitDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\EntryMappings.cs">
+            <Link>DTOs\Entries\EntryMappings.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\EntryQueries.cs">
+            <Link>DTOs\Entries\EntryQueries.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\EntryQueryParameters.cs">
+            <Link>DTOs\Entries\EntryQueryParameters.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\EntryStatsDto.cs">
+            <Link>DTOs\Entries\EntryStatsDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\UpdateEntryDto.cs">
+            <Link>DTOs\Entries\UpdateEntryDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\Entries\UpdateEntryDtoValidator.cs">
+            <Link>DTOs\Entries\UpdateEntryDtoValidator.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\EntryImports\CreateEntryImportJobDto.cs">
+            <Link>DTOs\EntryImports\CreateEntryImportJobDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\EntryImports\CreateEntryImportJobDtoValidator.cs">
+            <Link>DTOs\EntryImports\CreateEntryImportJobDtoValidator.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\EntryImports\CsvEntryRecord.cs">
+            <Link>DTOs\EntryImports\CsvEntryRecord.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\EntryImports\EntryImportJobDto.cs">
+            <Link>DTOs\EntryImports\EntryImportJobDto.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\EntryImports\EntryImportJobMappings.cs">
+            <Link>DTOs\EntryImports\EntryImportJobMappings.cs</Link>
+        </Compile>
+        <Compile Include="..\..\DTOs\EntryImports\EntryImportQueries.cs">
+            <Link>DTOs\EntryImports\EntryImportQueries.cs</Link>
         </Compile>
         <Compile Include="..\..\DTOs\GitHub\GitHubEventDto.cs">
             <Link>DTOs\GitHub\GitHubEventDto.cs</Link>
@@ -160,6 +227,12 @@
         </Compile>
         <Compile Include="..\..\DTOs\Users\UserQueries.cs">
             <Link>DTOs\Users\UserQueries.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\AutomationSource.cs">
+            <Link>Entities\AutomationSource.cs</Link>
+        </Compile>
+        <Compile Include="..\..\Entities\Entry.cs">
+            <Link>Entities\Entry.cs</Link>
         </Compile>
         <Compile Include="..\..\Entities\Frequency.cs">
             <Link>Entities\Frequency.cs</Link>

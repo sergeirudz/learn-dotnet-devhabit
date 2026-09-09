@@ -9,7 +9,9 @@ builder
     .AddDatabase()
     .AddObservability()
     .AddApplicationServices()
-    .AddAuthenticationServices();
+    .AddAuthenticationServices()
+    .AddBackgroundJobs()
+    .AddCorsPolicy();
 
 WebApplication app = builder.Build();
 

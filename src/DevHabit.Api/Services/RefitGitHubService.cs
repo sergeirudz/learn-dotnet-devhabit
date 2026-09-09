@@ -3,7 +3,7 @@ using Refit;
 
 namespace DevHabit.Api.Services;
 
-public sealed class RefitGitHubService(IGitHubApi gitHubApi, ILogger<GitHubService> logger)
+public sealed class RefitGitHubService(IGitHubApi gitHubApi, ILogger<RefitGitHubService> logger)
 {
     public async Task<GitHubUserProfileDto?> GetUserProfileAsync(
         string accessToken,

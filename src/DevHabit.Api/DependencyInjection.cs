@@ -4,6 +4,7 @@ using Asp.Versioning;
 using DevHabit.Api.Database;
 using DevHabit.Api.DTOs.Habits;
 using DevHabit.Api.Entities;
+using DevHabit.Api.Jobs;
 using DevHabit.Api.Middleware;
 using DevHabit.Api.Services;
 using DevHabit.Api.Services.Sorting;
@@ -22,6 +23,7 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Quartz;
 
 namespace DevHabit.Api;
 
@@ -284,4 +286,114 @@ public static class DependencyInjection
 
         return builder;
     }
+
+    public static WebApplicationBuilder AddBackgroundJobs(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddQuartz(q =>
+        {
+            // GitHub automation scheduler
+            q.AddJob<GitHubAutomationSchedulerJob>(opts => opts.WithIdentity("github-automation-scheduler"));
+
+            q.AddTrigger(opts => opts
+                .ForJob("github-automation-scheduler")
+                .WithIdentity("github-automation-scheduler-trigger")
+                .WithSimpleSchedule(s =>
+                {
+                    GitHubAutomationOptions settings = builder.Configuration
+                        .GetSection(GitHubAutomationOptions.SectionName)
+                        .Get<GitHubAutomationOptions>()!;
+
+                    s.WithInterval(TimeSpan.FromMinutes(settings.ScanIntervalMinutes))
+                        .RepeatForever();
+                }));
+
+            // Entry import cleanup job - runs daily at 3 AM UTC
+            q.AddJob<CleanupEntryImportJobsJob>(opts => opts.WithIdentity("cleanup-entry-imports"));
+
+            q.AddTrigger(opts => opts
+                .ForJob("cleanup-entry-imports")
+                .WithIdentity("cleanup-entry-imports-trigger")
+                .WithCronSchedule("0 0 3 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
+        });
+
+        builder.Services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddCorsPolicy(this WebApplicationBuilder builder)
+    {
+        CorsOptions corsOptions = builder.Configuration.GetSection(CorsOptions.SectionName).Get<CorsOptions>()!;
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(CorsOptions.PolicyName, policy =>
+            {
+                policy
+                    .WithOrigins(corsOptions.AllowedOrigins)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+
+        return builder;
+    }
+    // public static WebApplicationBuilder AddRateLimiting(this WebApplicationBuilder builder)
+    //    {
+    //        builder.Services.AddRateLimiter(options =>
+    //        {
+    //            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    //
+    //            options.OnRejected = async (context, token) =>
+    //            {
+    //                if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out TimeSpan retryAfter))
+    //                {
+    //                    context.HttpContext.Response.Headers.RetryAfter = $"{retryAfter.TotalSeconds}";
+    //
+    //                    ProblemDetailsFactory problemDetailsFactory = context.HttpContext.RequestServices
+    //                        .GetRequiredService<ProblemDetailsFactory>();
+    //                    Microsoft.AspNetCore.Mvc.ProblemDetails problemDetails = problemDetailsFactory
+    //                        .CreateProblemDetails(
+    //                            context.HttpContext,
+    //                            StatusCodes.Status429TooManyRequests,
+    //                            "Too Many Requests",
+    //                            detail: $"Too many requests. Please try again after {retryAfter.TotalSeconds} seconds."
+    //                        );
+    //
+    //                    await context.HttpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken: token);
+    //                }
+    //            };
+    //
+    //            options.AddPolicy("default", httpContext =>
+    //            {
+    //                string identityId = httpContext.User.GetIdentityId() ?? string.Empty;
+    //
+    //                if (!string.IsNullOrEmpty(identityId))
+    //                {
+    //                    return RateLimitPartition.GetTokenBucketLimiter(
+    //                        identityId,
+    //                        _ =>
+    //                            new TokenBucketRateLimiterOptions
+    //                            {
+    //                                TokenLimit = 100,
+    //                                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+    //                                QueueLimit = 5,
+    //                                ReplenishmentPeriod = TimeSpan.FromMinutes(1),
+    //                                TokensPerPeriod = 25
+    //                            });
+    //                }
+    //
+    //                return RateLimitPartition.GetFixedWindowLimiter(
+    //                    "anonymous",
+    //                    _ =>
+    //                        new FixedWindowRateLimiterOptions
+    //                        {
+    //                            PermitLimit = 5,
+    //                            Window = TimeSpan.FromMinutes(1)
+    //                        });
+    //            });
+    //        });
+    //
+    //        return builder;
+    //    }
 }
