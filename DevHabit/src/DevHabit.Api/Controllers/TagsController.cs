@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace DevHabit.Api.Controllers;
 
+// [ResponseCache(Duration = 120)] 120sec cache
 [Authorize(Roles = Roles.Member)]
 [ApiController]
 [Route("tags")]

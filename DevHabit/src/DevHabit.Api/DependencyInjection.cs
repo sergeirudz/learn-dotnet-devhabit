@@ -83,6 +83,8 @@ public static class DependencyInjection
             .AddMvc();
 
         builder.Services.AddOpenApi();
+
+        builder.Services.AddResponseCaching();
         return builder;
     }
 
