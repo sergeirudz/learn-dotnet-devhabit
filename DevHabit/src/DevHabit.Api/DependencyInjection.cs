@@ -24,6 +24,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Quartz;
+using Refit;
 
 namespace DevHabit.Api;
 
@@ -207,15 +208,15 @@ public static class DependencyInjection
             });
 
         //builder.Services.AddTransient<DelayHandler>();
-        // builder.Services
-        //     .AddRefitClient<IGitHubApi>(new RefitSettings
-        //     {
-        //         ContentSerializer = new NewtonsoftJsonContentSerializer()
-        //     })
-        //     .ConfigureHttpClient(client =>
-        //     {
-        //         client.BaseAddress = new Uri(builder.Configuration.GetSection("GitHub:BaseUrl").Get<string>()!);
-        //     });
+        builder.Services
+            .AddRefitClient<IGitHubApi>(new RefitSettings
+            {
+                ContentSerializer = new NewtonsoftJsonContentSerializer()
+            })
+            .ConfigureHttpClient(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration.GetSection("GitHub:BaseUrl").Get<string>()!);
+            });
         //.AddHttpMessageHandler<DelayHandler>();
         //.InternalRemoveAllResilienceHandlers()
         // Configuring a custom resilience pipeline for the GitHub API client

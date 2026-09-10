@@ -39,6 +39,10 @@
 
         <PackageReference Include="Refit"/>
 
+        <PackageReference Include="Refit.HttpClientFactory" />
+
+        <PackageReference Include="Refit.Newtonsoft.Json" />
+
         <PackageReference Include="System.Linq.Dynamic.Core"/>
     </ItemGroup>
 

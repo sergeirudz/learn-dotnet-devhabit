@@ -3,6 +3,7 @@ using Refit;
 
 namespace DevHabit.Api.Services;
 
+// Refit
 [Headers("User-Agent: DevHabit/1.0", "Accept: application/vnd.github+json")]
 public interface IGitHubApi
 {
