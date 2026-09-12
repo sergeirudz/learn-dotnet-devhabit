@@ -20,7 +20,7 @@ namespace DevHabit.Api.Controllers;
 // [DisableRateLimiting] // disable optionally
 [Authorize(Roles = Roles.Member)]
 [ApiController]
-[Route("entrie")]
+[Route("entries")]
 [ApiVersion(1.0)]
 [Produces(
     MediaTypeNames.Application.Json,
@@ -222,7 +222,7 @@ public sealed class EntriesController(
     }
 
     [HttpPost]
-    // When IACtionResult ?
+    [IdempotentRequest] // Will check Idempotency key in the header
     public async Task<ActionResult<EntryDto>> CreateEntry(
         CreateEntryDto createEntryDto,
         [FromHeader] AcceptHeaderDto acceptHeader,
