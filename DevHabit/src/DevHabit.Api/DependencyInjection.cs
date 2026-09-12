@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using DevHabit.Api.Database;
 using DevHabit.Api.DTOs.Habits;
 using DevHabit.Api.Entities;
@@ -158,9 +159,7 @@ public static class DependencyInjection
             .WithMetrics(metrics => metrics
                 .AddHttpClientInstrumentation()
                 .AddAspNetCoreInstrumentation()
-                .AddRuntimeInstrumentation())
-            // Setup a global exporter for opentelemetry data
-            .UseOtlpExporter();
+                .AddRuntimeInstrumentation());
 
         // Add logging
         builder.Logging.AddOpenTelemetry(options =>
@@ -169,6 +168,16 @@ public static class DependencyInjection
             options.IncludeScopes = true;
             options.IncludeFormattedMessage = true;
         });
+
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddOpenTelemetry().UseOtlpExporter();
+        }
+        else
+        {
+            // Export telemetry data to Azure in Prod
+            builder.Services.AddOpenTelemetry().UseAzureMonitor();
+        }
 
         return builder;
     }
