@@ -43,3 +43,5 @@ app.UseMiddleware<ETagMiddleware>();
 app.MapControllers();
 
 await app.RunAsync().ConfigureAwait(false);
+// For integration tests
+public partial class Program;
