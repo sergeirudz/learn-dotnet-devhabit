@@ -33,6 +33,7 @@ public sealed class ConfigureSwaggerGenOptions(/*IApiVersionDescriptionProvider 
         // How Query params are described
         options.DescribeAllParametersInCamelCase();
 
+        // How swagger is protected
         options.AddSecurityDefinition(
             "Bearer",
             new OpenApiSecurityScheme

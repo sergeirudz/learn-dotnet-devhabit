@@ -19,19 +19,21 @@ builder
 
 WebApplication app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "DevHabit API v1");
-});
 
-app.MapScalarApiReference(options =>
-{
-    options.WithOpenApiRoutePattern("/swagger/v1/swagger.json");
-});
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "DevHabit API v1");
+    });
+
+    app.MapScalarApiReference(options =>
+    {
+        options.WithOpenApiRoutePattern("/swagger/v1/swagger.json");
+    });
+
     // app.MapOpenApi(); // Disabled because Swagger is used instead
     // Run migrations when I start the app in development environment
     await app.ApplyMigrationsAsync(); // src/DevHabit.Api/Extensions/DatabaseExtensions.cs
