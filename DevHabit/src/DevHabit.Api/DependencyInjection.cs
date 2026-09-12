@@ -4,6 +4,7 @@ using Asp.Versioning;
 using DevHabit.Api.Database;
 using DevHabit.Api.DTOs.Habits;
 using DevHabit.Api.Entities;
+using DevHabit.Api.Extensions;
 using DevHabit.Api.Jobs;
 using DevHabit.Api.Middleware;
 using DevHabit.Api.Services;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.Extensions.Http.Resilience;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using Npgsql;
@@ -23,6 +25,7 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Polly;
 using Quartz;
 using Refit;
 
@@ -191,7 +194,7 @@ public static class DependencyInjection
         builder.Services.Configure<TagsOptions>(
             builder.Configuration.GetSection(TagsOptions.SectionName));
 
-
+        // If you configure global resilience handler, cant use custom ones
         builder.Services.AddHttpClient().ConfigureHttpClientDefaults(b => b.AddStandardResilienceHandler());
         builder.Services.AddTransient<RefitGitHubService>();
         builder.Services
@@ -216,187 +219,189 @@ public static class DependencyInjection
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration.GetSection("GitHub:BaseUrl").Get<string>()!);
-            });
-        //.AddHttpMessageHandler<DelayHandler>();
-        //.InternalRemoveAllResilienceHandlers()
-        // Configuring a custom resilience pipeline for the GitHub API client
-        //.AddResilienceHandler("custom", pipeline =>
-        //{
-        //    pipeline.AddTimeout(TimeSpan.FromSeconds(5));
-
-        //    pipeline.AddRetry(new HttpRetryStrategyOptions
-        //    {
-        //        MaxRetryAttempts = 3,
-        //        BackoffType = DelayBackoffType.Exponential,
-        //        UseJitter = true,
-        //        Delay = TimeSpan.FromMilliseconds(500)
-        //    });
-
-        //    pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
-        //    {
-        //        SamplingDuration = TimeSpan.FromSeconds(10),
-        //        FailureRatio = 0.9,
-        //        MinimumThroughput = 5,
-        //        BreakDuration = TimeSpan.FromSeconds(5)
-        //    });
-
-        //    pipeline.AddTimeout(TimeSpan.FromSeconds(1));
-        //});
-
-        builder.Services.Configure<EncryptionOptions>(
-            builder.Configuration.GetSection(EncryptionOptions.SectionName));
-        builder.Services.AddTransient<EncryptionService>();
-
-        builder.Services.Configure<GitHubAutomationOptions>(
-            builder.Configuration.GetSection(GitHubAutomationOptions.SectionName));
-
-        builder.Services.Configure<TagsOptions>(
-            builder.Configuration.GetSection(TagsOptions.SectionName));
-
-        builder.Services.AddSingleton<InMemoryETagStore>();
-
-        return builder;
-    }
-
-    public static WebApplicationBuilder AddAuthenticationServices(this WebApplicationBuilder builder)
-    {
-        builder.Services
-            .AddIdentity<IdentityUser, IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
-
-        builder.Services.Configure<JwtAuthOptions>(builder.Configuration.GetSection(JwtAuthOptions.SectionName));
-        JwtAuthOptions jwtAuthOptions = builder.Configuration
-            .GetSection(JwtAuthOptions.SectionName)
-            .Get<JwtAuthOptions>()!;
-
-        builder.Services
-            .AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+        // Custom resilience disabled because global resilence is sufficient for this project
+            .AddHttpMessageHandler<DelayHandler>();
+            // Because using global resilience then to use custom one need to use the following method
+            // .InternalRemoveAllResilienceHandlers()
+            // Configuring a custom resilience pipeline for the GitHub API client
+            // .AddResilienceHandler("custom", pipeline =>
+            // {
+            //     pipeline.AddTimeout(TimeSpan.FromSeconds(5));
+            //
+            //     pipeline.AddRetry(new HttpRetryStrategyOptions
+            //     {
+            //         MaxRetryAttempts = 3,
+            //         BackoffType = DelayBackoffType.Exponential,
+            //         UseJitter = true,
+            //         Delay = TimeSpan.FromMilliseconds(500)
+            //     });
+            //
+            //     pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
+            //     {
+            //         SamplingDuration = TimeSpan.FromSeconds(10),
+            //         FailureRatio = 0.9,
+            //         MinimumThroughput = 5,
+            //         BreakDuration = TimeSpan.FromSeconds(5)
+            //     });
+            //
+            //     pipeline.AddTimeout(TimeSpan.FromSeconds(1));
+            // });
+
+                builder.Services.Configure<EncryptionOptions>(
+                    builder.Configuration.GetSection(EncryptionOptions.SectionName));
+                builder.Services.AddTransient<EncryptionService>();
+
+                builder.Services.Configure<GitHubAutomationOptions>(
+                    builder.Configuration.GetSection(GitHubAutomationOptions.SectionName));
+
+                builder.Services.Configure<TagsOptions>(
+                    builder.Configuration.GetSection(TagsOptions.SectionName));
+
+                builder.Services.AddSingleton<InMemoryETagStore>();
+
+                return builder;
+            }
+
+        public static WebApplicationBuilder AddAuthenticationServices(this WebApplicationBuilder builder)
+        {
+            builder.Services
+                .AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
+
+            builder.Services.Configure<JwtAuthOptions>(builder.Configuration.GetSection(JwtAuthOptions.SectionName));
+            JwtAuthOptions jwtAuthOptions = builder.Configuration
+                .GetSection(JwtAuthOptions.SectionName)
+                .Get<JwtAuthOptions>()!;
+
+            builder.Services
+                .AddAuthentication(options =>
                 {
-                    ValidIssuer = jwtAuthOptions.Issuer,
-                    ValidAudience = jwtAuthOptions.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtAuthOptions.Key))
-                };
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = jwtAuthOptions.Issuer,
+                        ValidAudience = jwtAuthOptions.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtAuthOptions.Key))
+                    };
+                });
+
+            builder.Services.AddAuthorization();
+
+            return builder;
+        }
+
+        public static WebApplicationBuilder AddBackgroundJobs(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddQuartz(q =>
+            {
+                // GitHub automation scheduler
+                q.AddJob<GitHubAutomationSchedulerJob>(opts => opts.WithIdentity("github-automation-scheduler"));
+
+                q.AddTrigger(opts => opts
+                    .ForJob("github-automation-scheduler")
+                    .WithIdentity("github-automation-scheduler-trigger")
+                    .WithSimpleSchedule(s =>
+                    {
+                        GitHubAutomationOptions settings = builder.Configuration
+                            .GetSection(GitHubAutomationOptions.SectionName)
+                            .Get<GitHubAutomationOptions>()!;
+
+                        s.WithInterval(TimeSpan.FromMinutes(settings.ScanIntervalMinutes))
+                            .RepeatForever();
+                    }));
+
+                // Entry import cleanup job - runs daily at 3 AM UTC
+                q.AddJob<CleanupEntryImportJobsJob>(opts => opts.WithIdentity("cleanup-entry-imports"));
+
+                q.AddTrigger(opts => opts
+                    .ForJob("cleanup-entry-imports")
+                    .WithIdentity("cleanup-entry-imports-trigger")
+                    .WithCronSchedule("0 0 3 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
             });
 
-        builder.Services.AddAuthorization();
+            builder.Services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
-        return builder;
-    }
+            return builder;
+        }
 
-    public static WebApplicationBuilder AddBackgroundJobs(this WebApplicationBuilder builder)
-    {
-        builder.Services.AddQuartz(q =>
+        public static WebApplicationBuilder AddCorsPolicy(this WebApplicationBuilder builder)
         {
-            // GitHub automation scheduler
-            q.AddJob<GitHubAutomationSchedulerJob>(opts => opts.WithIdentity("github-automation-scheduler"));
+            CorsOptions corsOptions = builder.Configuration.GetSection(CorsOptions.SectionName).Get<CorsOptions>()!;
 
-            q.AddTrigger(opts => opts
-                .ForJob("github-automation-scheduler")
-                .WithIdentity("github-automation-scheduler-trigger")
-                .WithSimpleSchedule(s =>
-                {
-                    GitHubAutomationOptions settings = builder.Configuration
-                        .GetSection(GitHubAutomationOptions.SectionName)
-                        .Get<GitHubAutomationOptions>()!;
-
-                    s.WithInterval(TimeSpan.FromMinutes(settings.ScanIntervalMinutes))
-                        .RepeatForever();
-                }));
-
-            // Entry import cleanup job - runs daily at 3 AM UTC
-            q.AddJob<CleanupEntryImportJobsJob>(opts => opts.WithIdentity("cleanup-entry-imports"));
-
-            q.AddTrigger(opts => opts
-                .ForJob("cleanup-entry-imports")
-                .WithIdentity("cleanup-entry-imports-trigger")
-                .WithCronSchedule("0 0 3 * * ?", x => x.InTimeZone(TimeZoneInfo.Utc)));
-        });
-
-        builder.Services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
-
-        return builder;
-    }
-
-    public static WebApplicationBuilder AddCorsPolicy(this WebApplicationBuilder builder)
-    {
-        CorsOptions corsOptions = builder.Configuration.GetSection(CorsOptions.SectionName).Get<CorsOptions>()!;
-
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy(CorsOptions.PolicyName, policy =>
+            builder.Services.AddCors(options =>
             {
-                policy
-                    .WithOrigins(corsOptions.AllowedOrigins)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
+                options.AddPolicy(CorsOptions.PolicyName, policy =>
+                {
+                    policy
+                        .WithOrigins(corsOptions.AllowedOrigins)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
             });
-        });
 
-        return builder;
+            return builder;
+        }
+        // public static WebApplicationBuilder AddRateLimiting(this WebApplicationBuilder builder)
+        //    {
+        //        builder.Services.AddRateLimiter(options =>
+        //        {
+        //            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+        //
+        //            options.OnRejected = async (context, token) =>
+        //            {
+        //                if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out TimeSpan retryAfter))
+        //                {
+        //                    context.HttpContext.Response.Headers.RetryAfter = $"{retryAfter.TotalSeconds}";
+        //
+        //                    ProblemDetailsFactory problemDetailsFactory = context.HttpContext.RequestServices
+        //                        .GetRequiredService<ProblemDetailsFactory>();
+        //                    Microsoft.AspNetCore.Mvc.ProblemDetails problemDetails = problemDetailsFactory
+        //                        .CreateProblemDetails(
+        //                            context.HttpContext,
+        //                            StatusCodes.Status429TooManyRequests,
+        //                            "Too Many Requests",
+        //                            detail: $"Too many requests. Please try again after {retryAfter.TotalSeconds} seconds."
+        //                        );
+        //
+        //                    await context.HttpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken: token);
+        //                }
+        //            };
+        //
+        //            options.AddPolicy("default", httpContext =>
+        //            {
+        //                string identityId = httpContext.User.GetIdentityId() ?? string.Empty;
+        //
+        //                if (!string.IsNullOrEmpty(identityId))
+        //                {
+        //                    return RateLimitPartition.GetTokenBucketLimiter(
+        //                        identityId,
+        //                        _ =>
+        //                            new TokenBucketRateLimiterOptions
+        //                            {
+        //                                TokenLimit = 100,
+        //                                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+        //                                QueueLimit = 5,
+        //                                ReplenishmentPeriod = TimeSpan.FromMinutes(1),
+        //                                TokensPerPeriod = 25
+        //                            });
+        //                }
+        //
+        //                return RateLimitPartition.GetFixedWindowLimiter(
+        //                    "anonymous",
+        //                    _ =>
+        //                        new FixedWindowRateLimiterOptions
+        //                        {
+        //                            PermitLimit = 5,
+        //                            Window = TimeSpan.FromMinutes(1)
+        //                        });
+        //            });
+        //        });
+        //
+        //        return builder;
+        //    }
     }
-    // public static WebApplicationBuilder AddRateLimiting(this WebApplicationBuilder builder)
-    //    {
-    //        builder.Services.AddRateLimiter(options =>
-    //        {
-    //            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-    //
-    //            options.OnRejected = async (context, token) =>
-    //            {
-    //                if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out TimeSpan retryAfter))
-    //                {
-    //                    context.HttpContext.Response.Headers.RetryAfter = $"{retryAfter.TotalSeconds}";
-    //
-    //                    ProblemDetailsFactory problemDetailsFactory = context.HttpContext.RequestServices
-    //                        .GetRequiredService<ProblemDetailsFactory>();
-    //                    Microsoft.AspNetCore.Mvc.ProblemDetails problemDetails = problemDetailsFactory
-    //                        .CreateProblemDetails(
-    //                            context.HttpContext,
-    //                            StatusCodes.Status429TooManyRequests,
-    //                            "Too Many Requests",
-    //                            detail: $"Too many requests. Please try again after {retryAfter.TotalSeconds} seconds."
-    //                        );
-    //
-    //                    await context.HttpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken: token);
-    //                }
-    //            };
-    //
-    //            options.AddPolicy("default", httpContext =>
-    //            {
-    //                string identityId = httpContext.User.GetIdentityId() ?? string.Empty;
-    //
-    //                if (!string.IsNullOrEmpty(identityId))
-    //                {
-    //                    return RateLimitPartition.GetTokenBucketLimiter(
-    //                        identityId,
-    //                        _ =>
-    //                            new TokenBucketRateLimiterOptions
-    //                            {
-    //                                TokenLimit = 100,
-    //                                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-    //                                QueueLimit = 5,
-    //                                ReplenishmentPeriod = TimeSpan.FromMinutes(1),
-    //                                TokensPerPeriod = 25
-    //                            });
-    //                }
-    //
-    //                return RateLimitPartition.GetFixedWindowLimiter(
-    //                    "anonymous",
-    //                    _ =>
-    //                        new FixedWindowRateLimiterOptions
-    //                        {
-    //                            PermitLimit = 5,
-    //                            Window = TimeSpan.FromMinutes(1)
-    //                        });
-    //            });
-    //        });
-    //
-    //        return builder;
-    //    }
-}
