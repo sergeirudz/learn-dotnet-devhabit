@@ -39,11 +39,16 @@
 
         <PackageReference Include="Refit"/>
 
-        <PackageReference Include="Refit.HttpClientFactory" />
+        <PackageReference Include="Refit.HttpClientFactory"/>
 
-        <PackageReference Include="Refit.Newtonsoft.Json" />
+        <PackageReference Include="Refit.Newtonsoft.Json"/>
 
         <PackageReference Include="System.Linq.Dynamic.Core"/>
+    </ItemGroup>
+
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="DevHabit.UnitTests"/>
     </ItemGroup>
 
 </Project>

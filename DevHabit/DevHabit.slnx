@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="src/DevHabit.Api/DevHabit.Api.csproj" />
+  <Project Path="test/DevHabit.UnitTests/DevHabit.UnitTests.csproj" />
 </Solution>
