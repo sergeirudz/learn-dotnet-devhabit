@@ -10,6 +10,8 @@ namespace DevHabit.Api.Controllers;
 [Authorize(Roles = Roles.Member)]
 [ApiController]
 [Route("habits/{habitId}/tags")]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status403Forbidden)]
 public sealed class HabitTagsController(ApplicationDbContext dbContext) : ControllerBase
 {
     public static readonly string Name = nameof(HabitTagsController).Replace("Controller", string.Empty);

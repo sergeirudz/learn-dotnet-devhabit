@@ -24,10 +24,9 @@ namespace DevHabit.Api.Controllers;
 [ApiVersion(1.0)]
 [Produces(
     MediaTypeNames.Application.Json,
-    CustomMediaTypeNames.Application.HateoasJsonV1,
+    CustomMediaTypeNames.Application.JsonV1,
     CustomMediaTypeNames.Application.HateoasJson,
-    CustomMediaTypeNames.Application.HateoasJsonV1
-)]
+    CustomMediaTypeNames.Application.HateoasJsonV1)]
 public sealed class EntriesController(
     ApplicationDbContext dbContext,
     LinkService linkService,

@@ -16,6 +16,8 @@ namespace DevHabit.Api.Controllers;
 [ApiController]
 [Route("auth")]
 [AllowAnonymous]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class AuthController(
     // Built in: Allow to interact with users table
     UserManager<IdentityUser> userManager,

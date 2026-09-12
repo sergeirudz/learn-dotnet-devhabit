@@ -13,6 +13,8 @@ namespace DevHabit.Api.Controllers;
 [Authorize(Roles = Roles.Member)] //$"{Roles.Admin},{Roles.Member}"     
 [ApiController]
 [Route("users")]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status403Forbidden)]
 public sealed class UsersController(
     ApplicationDbContext dbContext,
     UserContext userContext,

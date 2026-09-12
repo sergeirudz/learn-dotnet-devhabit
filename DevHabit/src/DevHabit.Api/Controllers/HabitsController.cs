@@ -27,8 +27,10 @@ namespace DevHabit.Api.Controllers;
     CustomMediaTypeNames.Application.JsonV2,
     CustomMediaTypeNames.Application.HateoasJson,
     CustomMediaTypeNames.Application.HateoasJsonV1,
-    CustomMediaTypeNames.Application.HateoasJsonV2
-)] // can be set here instead of inside API
+    CustomMediaTypeNames.Application.HateoasJsonV2)]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status403Forbidden)]
+// can be set here instead of inside API
 public sealed class HabitsController(
     ApplicationDbContext dbContext,
     LinkService linkService,

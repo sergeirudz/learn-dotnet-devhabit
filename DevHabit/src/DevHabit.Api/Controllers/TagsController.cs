@@ -23,8 +23,9 @@ namespace DevHabit.Api.Controllers;
     MediaTypeNames.Application.Json,
     CustomMediaTypeNames.Application.JsonV1,
     CustomMediaTypeNames.Application.HateoasJson,
-    CustomMediaTypeNames.Application.HateoasJsonV1
-)]
+    CustomMediaTypeNames.Application.HateoasJsonV1)]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status403Forbidden)]
 public sealed class TagsController(
     ApplicationDbContext dbContext,
     LinkService linkService,

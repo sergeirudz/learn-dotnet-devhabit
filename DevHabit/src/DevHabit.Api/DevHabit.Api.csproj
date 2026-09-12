@@ -2,6 +2,10 @@
 
     <PropertyGroup>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <!-- Generate XML doc comments file, required by Swagger's IncludeXmlComments -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <!-- Don't require XML comments on every public member (CS1591) -->
+        <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -42,6 +46,10 @@
         <PackageReference Include="Refit.HttpClientFactory"/>
 
         <PackageReference Include="Refit.Newtonsoft.Json"/>
+
+        <PackageReference Include="Scalar.AspNetCore" />
+
+        <PackageReference Include="Swashbuckle.AspNetCore" />
 
         <PackageReference Include="System.Linq.Dynamic.Core"/>
     </ItemGroup>
