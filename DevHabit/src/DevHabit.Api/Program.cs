@@ -32,7 +32,7 @@ app.MapScalarApiReference(options =>
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    // app.MapOpenApi(); // Disabled because Swagger is used instead
     // Run migrations when I start the app in development environment
     await app.ApplyMigrationsAsync(); // src/DevHabit.Api/Extensions/DatabaseExtensions.cs
 

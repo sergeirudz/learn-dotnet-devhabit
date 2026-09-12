@@ -28,7 +28,9 @@ public sealed class ConfigureSwaggerGenOptions(/*IApiVersionDescriptionProvider 
             options.IncludeXmlComments(xmlPath);
         }
 
+        // Fixes if I will have generic types in the code
         options.CustomSchemaIds(type => type.FullName?.Replace("+", "."));
+        // How Query params are described
         options.DescribeAllParametersInCamelCase();
 
         options.AddSecurityDefinition(

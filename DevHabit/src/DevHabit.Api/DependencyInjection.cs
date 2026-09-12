@@ -87,19 +87,13 @@ public static class DependencyInjection
                     // new HeaderApiVersionReader("x-api-version") // read version from custom header
                 );
             })
-            .AddMvc();
+            .AddMvc()
+            .AddApiExplorer(); // Describe API versions
 
         //builder.Services.AddOpenApi();
-        builder.Services.AddSwaggerGen(options =>
-        {
-            options.ResolveConflictingActions(descriptions => descriptions.First());
-
-            string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            options.IncludeXmlComments(xmlPath);
-        });
+        builder.Services.AddSwaggerGen();
         builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
-
+        builder.Services.ConfigureOptions<ConfigureSwaggerUiOptions>();
         builder.Services.AddResponseCaching();
         return builder;
     }
